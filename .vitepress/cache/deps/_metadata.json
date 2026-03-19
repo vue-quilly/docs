@@ -1,0 +1,40 @@
+{
+  "hash": "c7820784",
+  "configHash": "3161fa95",
+  "lockfileHash": "49e394fe",
+  "browserHash": "6d2dce86",
+  "optimized": {
+    "vue": {
+      "src": "../../../node_modules/.pnpm/vue@3.5.30/node_modules/vue/dist/vue.runtime.esm-bundler.js",
+      "file": "vue.js",
+      "fileHash": "e98038a4",
+      "needsInterop": false
+    },
+    "vitepress > @vue/devtools-api": {
+      "src": "../../../node_modules/.pnpm/@vue+devtools-api@8.1.0/node_modules/@vue/devtools-api/dist/index.js",
+      "file": "vitepress___@vue_devtools-api.js",
+      "fileHash": "824f72c3",
+      "needsInterop": false
+    },
+    "vitepress > @vueuse/core": {
+      "src": "../../../node_modules/.pnpm/@vueuse+core@14.2.1_vue@3.5.30/node_modules/@vueuse/core/dist/index.js",
+      "file": "vitepress___@vueuse_core.js",
+      "fileHash": "87a05555",
+      "needsInterop": false
+    },
+    "@vercel/analytics/vue": {
+      "src": "../../../node_modules/.pnpm/@vercel+analytics@2.0.1_vue-router@5.0.4_@vue+compiler-sfc@3.5.30_vue@3.5.30__vue@3.5.30/node_modules/@vercel/analytics/dist/vue/index.mjs",
+      "file": "@vercel_analytics_vue.js",
+      "fileHash": "8cf4e076",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-7NEBVMPQ": {
+      "file": "chunk-7NEBVMPQ.js"
+    },
+    "chunk-5L7VQD3R": {
+      "file": "chunk-5L7VQD3R.js"
+    }
+  }
+}

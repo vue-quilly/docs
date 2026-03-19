@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "vitepress": "2.0.0-alpha.17"
+  },
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1",
+    "vue-router": "^5.0.4"
+  }
+}
