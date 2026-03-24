@@ -16,7 +16,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/getting-started' },
       { text: 'API', link: '/api/component' },
       { text: 'Examples', link: '/examples/' },
-      { text: 'Support', link: 'https://ko-fi.com/oleksandrshevchuk' }
+      { text: 'Support', link: 'https://buymeacoffee.com/alekswebnet' }
     ],
 
     sidebar: [
