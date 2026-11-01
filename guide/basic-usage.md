@@ -31,6 +31,34 @@ onMounted(() => {
 </template>
 ```
 
+## Using the Composable <Badge type="tip" text="v1.2.0+" />
+
+Prefer to render the editor container yourself? The `useQuilly` composable runs the same logic as the component:
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useQuilly } from 'vue-quilly'
+import Quill from 'quill'
+import 'quill/dist/quill.snow.css'
+
+const container = ref<HTMLElement>()
+const content = ref('')
+
+const { initialize } = useQuilly(container, { model: content })
+
+onMounted(() => {
+  initialize(Quill)
+})
+</script>
+
+<template>
+  <div ref="container"></div>
+</template>
+```
+
+The patterns below use the component, and they work the same with the composable: props become options and events become `on*` callbacks. See [Composable API](/api/composable).
+
 ## Content Management
 
 ### HTML Format
