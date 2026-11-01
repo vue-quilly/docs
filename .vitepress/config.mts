@@ -32,6 +32,7 @@ export default defineConfig({
         text: 'API Reference',
         items: [
           { text: 'Component API', link: '/api/component' },
+          { text: 'Composable API', link: '/api/composable' },
           { text: 'Events', link: '/api/events' },
           { text: 'TypeScript Types', link: '/api/types' }
         ]

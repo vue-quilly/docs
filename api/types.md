@@ -30,6 +30,23 @@ onMounted(() => {
 </script>
 ```
 
+### UseQuillyOptions and UseQuillyReturn
+
+Types of the [`useQuilly` composable](/api/composable) options and return value.
+
+```typescript
+import { ref } from 'vue'
+import { useQuilly } from 'vue-quilly'
+import type { UseQuillyOptions, UseQuillyReturn } from 'vue-quilly'
+
+const container = ref<HTMLElement>()
+const options: UseQuillyOptions = {
+  model: ref('<p>Hello</p>'),
+  options: { theme: 'snow' }
+}
+const { quill, model, initialize }: UseQuillyReturn = useQuilly(container, options)
+```
+
 ---
 
 ## Quill Core Types
@@ -414,6 +431,9 @@ Quick reference for all type imports:
 ```typescript
 // Component types
 import type { QuillyEditor } from 'vue-quilly'
+
+// Composable types
+import type { UseQuillyOptions, UseQuillyReturn } from 'vue-quilly'
 
 // Quill core types
 import type { 

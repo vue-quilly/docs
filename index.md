@@ -91,6 +91,7 @@ vue-quilly is designed to be a flexible foundation for building custom Quill edi
 - **Minimal footprint** - Import only the Quill modules you need to keep bundle size small
 - **Flexible formats** - Work with HTML or Delta format, or use both for maximum flexibility
 - **Full control** - Access the Quill instance directly for advanced customization and features
+- **Component or composable** - Use the `QuillyEditor` component, or the [`useQuilly` composable](/api/composable) on markup you render yourself
 
 ## Examples
 

@@ -2,6 +2,10 @@
 
 The `QuillyEditor` component emits various events that allow you to respond to user interactions and content changes.
 
+::: tip
+Using the [`useQuilly` composable](/api/composable)? It reports the same events through `on*` callbacks such as `onTextChange`, see [Callbacks](/api/composable#callbacks).
+:::
+
 ## Event List
 
 All events are fully typed for TypeScript support.
