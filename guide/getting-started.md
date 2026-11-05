@@ -245,7 +245,7 @@ vue-quilly supports the same browsers as Vue 3 and Quill v2:
 
 ## Requirements
 
-- Vue 3.0+
+- Vue 3.3+
 - Quill 2.0+
 
 ## Get Help
