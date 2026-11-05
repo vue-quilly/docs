@@ -25,7 +25,8 @@ export default defineConfig({
         items: [
           { text: 'Getting Started', link: '/guide/getting-started' },
           { text: 'Installation', link: '/guide/installation' },
-          { text: 'Basic Usage', link: '/guide/basic-usage' }
+          { text: 'Basic Usage', link: '/guide/basic-usage' },
+          { text: 'Comparison with VueQuill', link: '/guide/vs-vuequill' }
         ]
       },
       {
