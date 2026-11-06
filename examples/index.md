@@ -1,6 +1,6 @@
 # Examples
 
-Try these editors and more in the [live demo](https://vue-quilly.vercel.app/) ([source](https://github.com/alekswebnet/vue-quilly/tree/main/demo)).
+Try these editors and more in the [live demo](https://vue-quilly.vercel.app/) ([source](https://github.com/vue-quilly/website)).
 
 ## Full toolbar
 
