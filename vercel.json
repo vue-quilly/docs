@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    { "source": "/guide/installation.html", "destination": "/guide/getting-started.html" },
+    { "source": "/api/events.html", "destination": "/api/component.html" },
+    { "source": "/api/types.html", "destination": "/api/component.html" },
+    { "source": "/examples/snow-theme.html", "destination": "/examples/" },
+    { "source": "/examples/bubble-theme.html", "destination": "/examples/" },
+    { "source": "/examples/semantic-html.html", "destination": "/examples/" },
+    { "source": "/examples/image-resize.html", "destination": "/examples/" },
+    { "source": "/examples/custom-editor.html", "destination": "/examples/" },
+    { "source": "/api-examples.html", "destination": "/" },
+    { "source": "/markdown-examples.html", "destination": "/" }
+  ]
+}

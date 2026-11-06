@@ -5,33 +5,31 @@ layout: home
 hero:
   name: "vue-quilly"
   text: ""
-  tagline: Tiny Vue component for creating Quill v2 based WYSIWYG editors
+  tagline: Tiny Vue 3 component for building Quill 2 editors
   actions:
-    - theme: alt
+    - theme: brand
       text: Get Started
       link: /guide/getting-started
-    - theme: brand
+    - theme: alt
       text: Try Demo
       link: https://vue-quilly.vercel.app/
 
 features:
-  - title: 🚀 Quill v2 Support
-    details: Built on top of Quill v2 and Vue 3, providing modern rich text editing capabilities with the latest features.
-  - title: 📦 Minimal Bundle Size
-    details: Uses quill/core to prevent importing all Quill modules. Import only what you need to keep your bundle small.
-  - title: 🔷 TypeScript Support
-    details: Full TypeScript definitions included for better development experience, type safety, and IntelliSense support.
-  - title: 🔄 Dual Format Support
-    details: Works with both HTML and Quill Delta format. Use one or both formats to manipulate editor content.
-  - title: ⚙️ Customizable
-    details: Not an all-in-one solution. Build your own editor that matches your exact needs with flexible configuration.
-  - title: ⚡ Framework Ready
-    details: Works seamlessly with Vue 3 and Nuxt 4. SSR compatible with proper client-side initialization setup.
+  - title: 🪶 Tiny
+    details: About 1.3 KB gzipped. Quill loads after mount, in its own chunk.
+  - title: ⚡ SSR ready
+    details: Works in Nuxt and other SSR apps without ClientOnly.
+  - title: 🔄 HTML and Delta
+    details: v-model with Quill's HTML or semantic HTML, and the Quill API for Delta.
+  - title: ⚙️ Plain Quill
+    details: Quill's own options, modules and plugins. Load the full build, or only the parts you use from quill/core.
+  - title: 🧩 Component or composable
+    details: Use the QuillyEditor component, or useQuilly on markup you render yourself.
+  - title: 🔷 TypeScript
+    details: Typed props, events and composable.
 ---
 
 ## Quick Start
-
-Install vue-quilly and Quill v2:
 
 ::: code-group
 
@@ -49,59 +47,23 @@ yarn add vue-quilly quill@2
 
 :::
 
-Use in your Vue component:
-
 ```vue
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { QuillyEditor } from 'vue-quilly'
-import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 
-const editor = ref<InstanceType<typeof QuillyEditor>>()
 const content = ref('<p>Hello Quilly!</p>')
-let quill: Quill | undefined
-
-const options = {
-  theme: 'snow',
-  modules: {
-    toolbar: [
-      ['bold', 'italic', 'underline'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link', 'image']
-    ]
-  }
-}
-
-onMounted(() => {
-  quill = editor.value?.initialize(Quill)
-})
+const loadQuill = () => import('quill')
 </script>
 
 <template>
-  <QuillyEditor ref="editor" v-model="content" :options="options" />
+  <QuillyEditor v-model="content" :options="{ theme: 'snow' }" :quill-class="loadQuill" />
 </template>
 ```
 
-## Why vue-quilly?
-
-vue-quilly is designed to be a flexible foundation for building custom Quill editors in Vue applications:
-
-- **Customizable** - Requires Quill configuration, giving you full control over features.
-- **Minimal footprint** - Import only the Quill modules you need to keep bundle size small
-- **Flexible formats** - Work with HTML or Delta format, or use both for maximum flexibility
-- **Full control** - Access the Quill instance directly for advanced customization and features
-- **Component or composable** - Use the `QuillyEditor` component, or the [`useQuilly` composable](/api/composable) on markup you render yourself
-
-## Examples
-
-Check out live examples and learn from real implementations:
-
-- 🚀 [Live Demo](https://vue-quilly.vercel.app/) - See various editors built with vue-quilly
-- 📚 [Demo Source Code](https://github.com/alekswebnet/vue-quilly/tree/main/demo) - Complete examples with source code
-- ⚡ [Nuxt 4 Example](https://github.com/alekswebnet/vue-quilly/tree/main/nuxt) - SSR integration guide
+Continue with [Getting Started](/guide/getting-started).
 
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=alekswebnet/vue-quilly&type=date&legend=top-left)](https://www.star-history.com/#alekswebnet/vue-quilly&type=date&legend=top-left)
-

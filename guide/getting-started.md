@@ -1,50 +1,83 @@
 # Getting Started
 
-Welcome to vue-quilly! This guide will help you get started with building rich text editors in your Vue 3 applications.
+vue-quilly gives [Quill 2](https://quilljs.com/) a Vue 3 component with `v-model`, events and types. The rest is plain Quill: you configure it with Quill's [options](https://quilljs.com/docs/configuration) and extend it with Quill modules and plugins.
 
-## What is vue-quilly?
+## Installation
 
-vue-quilly is a lightweight Vue 3 component that wraps [Quill v2](https://quilljs.com/), the powerful rich text editor. It provides:
+::: code-group
 
-- 🎯 **Simple integration** - Easy to add to any Vue 3 project
-- 📦 **Minimal bundle** - Uses `quill/core` for tree-shaking
-- 🔷 **TypeScript support** - Full type definitions included
-- 🔄 **Dual format** - Works with HTML and Delta formats
-- ⚙️ **Highly customizable** - Build exactly what you need
+```bash [npm]
+npm install vue-quilly quill@2
+```
 
-## Philosophy
+```bash [pnpm]
+pnpm add vue-quilly quill@2
+```
 
-vue-quilly is **not** an all-in-one editor solution. Instead, it's a flexible foundation that lets you:
+```bash [yarn]
+yarn add vue-quilly quill@2
+```
 
-- Import only the Quill modules you need
-- Build custom editors tailored to your use case
-- Maintain full control over features and styling
-- Keep your bundle size minimal
+:::
 
-## Quick Example
+Requires Vue 3.3+ and Quill 2.
 
-Here's a minimal example to get you started:
+## Create an editor <Badge type="tip" text="v1.3.0+" />
 
 ```vue
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { QuillyEditor } from 'vue-quilly'
-import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 
-const editor = ref<InstanceType<typeof QuillyEditor>>()
-const content = ref('<p>Hello World!</p>')
-let quill: Quill | undefined
+const content = ref('<p>Hello Quilly!</p>')
 
 const options = {
   theme: 'snow',
   modules: {
     toolbar: [
       ['bold', 'italic', 'underline'],
-      [{ list: 'ordered' }, { list: 'bullet' }]
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link', 'image']
     ]
   }
 }
+
+const loadQuill = () => import('quill')
+</script>
+
+<template>
+  <QuillyEditor v-model="content" :options="options" :quill-class="loadQuill" />
+</template>
+```
+
+`quill-class` takes a loader: a function that imports Quill. After mount, the editor loads Quill in its own chunk, creates itself and emits `ready` with the [Quill instance](/guide/basic-usage#quill-instance). If you already import Quill, pass the class instead: `:quill-class="Quill"`.
+
+Import the CSS of your theme, `quill.snow.css` or `quill.bubble.css`. Both include Quill's core styles. Without a theme, import `quill/dist/quill.core.css`.
+
+## Nuxt and SSR
+
+With a loader, nothing else is needed. The server renders an empty `<div>`, and Quill loads in the browser after hydration. You don't need `<ClientOnly>`.
+
+Quill itself can't run on the server: importing `quill` or `quill/core` throws `document is not defined`. Keep it out of components that render there:
+
+- Import only types at the top level: `import type Quill from 'quill'`.
+- Register plugins in a module that your loader imports, as shown in [Plugins and formats](/guide/basic-usage#plugins-and-formats).
+
+## Initialize manually
+
+To create the editor yourself, or with vue-quilly before 1.3.0, leave out `quill-class` and call `initialize()` after mount. It returns the Quill instance:
+
+```vue
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { QuillyEditor } from 'vue-quilly'
+import Quill from 'quill'
+import 'quill/dist/quill.snow.css'
+
+const editor = ref<InstanceType<typeof QuillyEditor>>()
+const content = ref('<p>Hello Quilly!</p>')
+let quill: Quill | undefined
 
 onMounted(() => {
   quill = editor.value?.initialize(Quill)
@@ -52,208 +85,48 @@ onMounted(() => {
 </script>
 
 <template>
-  <QuillyEditor 
-    ref="editor" 
-    v-model="content" 
-    :options="options" 
-  />
+  <QuillyEditor ref="editor" v-model="content" :options="{ theme: 'snow' }" />
 </template>
 ```
 
-That's it! You now have a working rich text editor.
+With SSR, import Quill inside `onMounted` instead, and use `import type Quill from 'quill'` at the top:
 
-## Core Concepts
-
-### 1. Quill Initialization
-
-The editor requires explicit initialization:
-
-```typescript
-const editor = ref<InstanceType<typeof QuillyEditor>>()
-let quill: Quill | undefined
-
-onMounted(() => {
+```ts
+onMounted(async () => {
+  const { default: Quill } = await import('quill')
   quill = editor.value?.initialize(Quill)
 })
 ```
 
-This gives you control over when and how Quill is initialized.
+## Without a bundler <Badge type="tip" text="v1.3.0+" />
 
-**Accessing Quill instance:**
-
-Once initialized, you can access the full Quill API:
-
-```typescript
-onMounted(() => {
-  quill = editor.value?.initialize(Quill)
-  
-  // Use Quill methods
-  quill?.focus()
-  quill?.setSelection(0, 0)
-  
-  // Get content
-  const text = quill?.getText()
-  const delta = quill?.getContents()
-  
-  // Format text
-  quill?.formatText(0, 5, 'bold', true)
-})
-```
-
-**Using Quill plugins:**
-
-You can register and use Quill plugins by registering them before initialization:
-
-```typescript
-import Quill from 'quill'
-import ImageResize from 'quill-resize-module'
-
-onMounted(() => {
-  // Register image resize plugin
-  Quill.register('modules/ImageResize', ImageResize)
-  
-  // Initialize editor with the plugin
-  quill = editor.value?.initialize(Quill)
-})
-```
-
-**Plugin configuration in options:**
-
-```typescript
-const options = {
-  theme: 'snow',
-  modules: {
-    toolbar: [['bold', 'italic'], ['image']],
-    ImageResize: {
-      modules: ['Resize', 'DisplaySize']
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" />
+<script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
+<script type="importmap">
+  {
+    "imports": {
+      "vue": "https://cdn.jsdelivr.net/npm/vue@3/dist/vue.esm-browser.prod.js",
+      "vue-quilly": "https://cdn.jsdelivr.net/npm/vue-quilly@1/dist/vue-quilly.js"
     }
   }
-}
+</script>
+
+<div id="app">
+  <quilly-editor v-model="content" :options="options" :quill-class="Quill"></quilly-editor>
+</div>
+
+<script type="module">
+  import { createApp, ref } from 'vue'
+  import { QuillyEditor } from 'vue-quilly'
+
+  createApp({
+    components: { QuillyEditor },
+    setup: () => ({
+      content: ref('<p>Hello Quilly!</p>'),
+      options: { theme: 'snow' },
+      Quill: window.Quill
+    })
+  }).mount('#app')
+</script>
 ```
-
-**Example with KaTeX (formula support):**
-
-```typescript
-import Quill from 'quill'
-import katex from 'katex'
-import 'katex/dist/katex.min.css'
-
-onMounted(() => {
-  // Make KaTeX available globally for Quill
-  (window.katex as typeof katex) = katex
-  
-  // Initialize editor - formula module is built-in
-  quill = editor.value?.initialize(Quill)
-})
-```
-
-**Example with custom formats/blots:**
-
-```typescript
-import Quill from 'quill/core'
-import { type BlotConstructor } from 'parchment'
-
-const Inline = Quill.import('blots/inline') as BlotConstructor
-
-// Create custom blot
-class CustomBlot extends Inline {
-  static blotName = 'custom'
-  static tagName = 'span'
-  static className = 'my-custom-class'
-}
-
-// Register before initialization
-Quill.register(CustomBlot)
-
-onMounted(() => {
-  quill = editor.value?.initialize(Quill)
-})
-```
-
-### 2. Content Formats
-
-vue-quilly supports two content formats:
-
-**HTML Format (v-model):**
-```vue
-<QuillyEditor v-model="content" />
-```
-
-**Delta Format (Quill API):**
-```typescript
-import { Delta } from 'quill/core'
-
-quill.setContents(
-  new Delta()
-    .insert('Hello ')
-    .insert('World', { bold: true })
-)
-```
-
-### 3. Configuration
-
-Configure the editor using Quill's options:
-
-```typescript
-const options = {
-  theme: 'snow',           // or 'bubble'
-  placeholder: 'Write...',
-  readOnly: false,
-  modules: {
-    toolbar: [/* ... */]   // Customize toolbar
-  }
-}
-```
-
-### 4. Event Handling
-
-Listen to editor events:
-
-```vue
-<QuillyEditor
-  v-model="content"
-  @text-change="onTextChange"
-  @selection-change="onSelectionChange"
-  @ready="onReady"
-/>
-```
-
-## Next Steps
-
-Now that you understand the basics, continue with:
-
-1. **[Installation](/guide/installation)** - Set up vue-quilly in your project
-2. **[Basic Usage](/guide/basic-usage)** - Learn common patterns and features
-3. **[Examples](/examples/)** - See practical implementations
-4. **[API Reference](/api/component)** - Detailed API documentation
-
-## Learning Resources
-
-- [Quill Documentation](https://quilljs.com/docs/) - Official Quill docs
-- [Live Demo](https://vue-quilly.vercel.app/) - Try vue-quilly online
-- [GitHub Repository](https://github.com/alekswebnet/vue-quilly) - Source code and issues
-- [Demo Source](https://github.com/alekswebnet/vue-quilly/tree/main/demo) - Example implementations
-
-## Browser Support
-
-vue-quilly supports the same browsers as Vue 3 and Quill v2:
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## Requirements
-
-- Vue 3.3+
-- Quill 2.0+
-
-## Get Help
-
-If you need help:
-
-- 📖 Check the [API documentation](/api/component)
-- 💡 Browse [examples](/examples/)
-- 🐛 Report issues on [GitHub](https://github.com/alekswebnet/vue-quilly/issues)
-
-Ready to install? Head to the [Installation guide](/guide/installation)!
