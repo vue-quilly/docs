@@ -5,12 +5,12 @@ export default defineConfig({
   title: "Vue Quilly Docs",
   description: "Documentation for vue-quilly",
   head: [
-    ['link', { rel: 'icon', href: './favicon.ico' }],
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['script', { async: 'async', src: 'https://media.bitterbrains.com/main.js?from=VUEQUILLY&type=bottom' }],
   ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    logo: './vue_quilly_logo.webp',
+    logo: '/vue_quilly_logo.webp',
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Guide', link: '/guide/getting-started' },
