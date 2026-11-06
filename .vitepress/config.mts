@@ -16,7 +16,7 @@ export default defineConfig({
       { text: 'Guide', link: '/guide/getting-started' },
       { text: 'API', link: '/api/component' },
       { text: 'Examples', link: '/examples/' },
-      { text: 'Support', link: 'https://buymeacoffee.com/alekswebnet' }
+      { text: 'Support', link: 'https://opencollective.com/vuequilly' }
     ],
 
     sidebar: [
@@ -24,31 +24,18 @@ export default defineConfig({
         text: 'Guide',
         items: [
           { text: 'Getting Started', link: '/guide/getting-started' },
-          { text: 'Installation', link: '/guide/installation' },
-          { text: 'Basic Usage', link: '/guide/basic-usage' },
+          { text: 'Usage', link: '/guide/basic-usage' },
           { text: 'Comparison with VueQuill', link: '/guide/vs-vuequill' }
         ]
       },
       {
-        text: 'API Reference',
+        text: 'API',
         items: [
-          { text: 'Component API', link: '/api/component' },
-          { text: 'Composable API', link: '/api/composable' },
-          { text: 'Events', link: '/api/events' },
-          { text: 'TypeScript Types', link: '/api/types' }
+          { text: 'Component', link: '/api/component' },
+          { text: 'Composable', link: '/api/composable' }
         ]
       },
-      {
-        text: 'Examples',
-        items: [
-          { text: 'Overview', link: '/examples/' },
-          { text: 'Snow Theme', link: '/examples/snow-theme' },
-          { text: 'Bubble Theme', link: '/examples/bubble-theme' },
-          { text: 'Semantic HTML', link: '/examples/semantic-html' },
-          { text: 'Image Resize', link: '/examples/image-resize' },
-          { text: 'Custom Editor', link: '/examples/custom-editor' }
-        ]
-      }
+      { text: 'Examples', link: '/examples/' }
     ],
 
     socialLinks: [

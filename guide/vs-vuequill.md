@@ -9,37 +9,38 @@ description: How vue-quilly compares with VueQuill (@vueup/vue-quill) — bundle
 - **VueQuill** is a ready-made editor: props and toolbar presets for common options, and it loads Quill for you.
 - **vue-quilly** is the editor logic only: you load Quill yourself, choose the build, and configure it with Quill's own options.
 
-This page compares vue-quilly 1.2.0 with VueQuill 1.5.5, the current versions as of November 2026.
+This page compares vue-quilly 1.3.0 with VueQuill 1.5.5, the current versions as of November 2026.
 
 ## At a glance
 
 | | vue-quilly | VueQuill |
 | --- | --- | --- |
 | Quill | 2.x, you install `quill@2` | 2.x, installed as its dependency |
-| Loading Quill | You pass a Quill class to `initialize()`: full `quill`, or `quill/core` with only the formats you register | Loads the full `quill` build itself after mount |
+| Loading Quill | You pass the Quill class or a loader as `quill-class`: full `quill`, or `quill/core` with only the formats you register | Loads the full `quill` build itself after mount |
 | `v-model` | HTML string | Delta (default), HTML or plain text, set by `content-type` |
 | HTML output | Quill's editor HTML, or semantic HTML with `is-semantic-html-model` | Quill's editor HTML |
 | Configuration | Quill's `options` object | Props (`theme`, `toolbar` presets, `placeholder`, `read-only`, `enable`, `modules`) plus `options` |
 | Custom toolbar | Quill's `toolbar` option | Quill's `toolbar` option, or markup in the `toolbar` slot |
 | Composable | [`useQuilly()`](/api/composable) | — |
-| Quill instance | Returned by `initialize()` | `getQuill()`, plus helper methods (`getHTML`, `setContents`, `getText`, `reinit`, …) |
-| Plugins | `Quill.register()` on the class you pass to `initialize()` | `modules` prop, or `register()` on VueQuill's exported `Quill` ([see below](#plugins)) |
-| SSR / Nuxt | Import Quill in the browser yourself ([see below](#ssr-and-nuxt)) | Works without extra setup |
+| Quill instance | `ready` event, or the return value of `initialize()` | `getQuill()`, plus helper methods (`getHTML`, `setContents`, `getText`, `reinit`, …) |
+| Plugins | `Quill.register()` in the module your loader imports | `modules` prop, or `register()` on VueQuill's exported `Quill` ([see below](#plugins)) |
+| SSR / Nuxt | Works with a loader, no extra setup | Works without extra setup |
 
 ## Bundle size
 
-Measured with production builds (Vite 8.3, Vue 3.5, Quill 2.0.3) of a page with one Snow editor and this toolbar: bold, italic, underline, ordered and bullet lists, link. Numbers are gzipped JavaScript added to an empty Vue app.
+Measured with production builds (Vite 8.3, Vue 3.5, Quill 2.0.3) of a page with one Snow editor and this toolbar: bold, italic, underline, ordered and bullet lists, link. vue-quilly loads Quill with a `quill-class` loader. Numbers are gzipped JavaScript added to an empty Vue app.
 
 | Setup | With the page | After mount | Total |
 | --- | ---: | ---: | ---: |
-| vue-quilly + full `quill` | 57.3 KB | – | 57.3 KB |
-| vue-quilly + `quill/core` with Snow and the 5 formats used | 53.3 KB | – | 53.3 KB |
-| vue-quilly + `quill/core`, no theme, 3 formats ([Custom Editor](/examples/custom-editor)) | 43.8 KB | – | 43.8 KB |
+| vue-quilly + full `quill` | 1.8 KB | 56.8 KB | 58.6 KB |
+| vue-quilly + `quill/core` with Snow and the 5 formats used | 1.8 KB | 52.8 KB | 54.6 KB |
+| vue-quilly + `quill/core`, no theme, 3 formats ([custom editor](/examples/#custom-editor-with-quill-core)) | 1.8 KB | 43.3 KB | 45.1 KB |
 | VueQuill | 14.2 KB | 45.6 KB | 59.8 KB |
 
-- With the same full Quill build, the totals are close: VueQuill adds about 2.5 KB more.
-- VueQuill loads Quill as a separate chunk after mount, so less JavaScript ships with the page. vue-quilly does the same if you import Quill inside `onMounted` ([see below](#ssr-and-nuxt)).
-- `quill/core` saves the most when you drop the Snow and Bubble themes, which bring the toolbar UI, icons and pickers. With Snow, it saves about 4 KB.
+- Both load Quill after mount. vue-quilly adds 1.8 KB to the page, VueQuill 14.2 KB.
+- With the same full Quill build, the totals are close: VueQuill loads about 1.2 KB more.
+- `quill/core` saves the most when you drop the Snow and Bubble themes, which bring the toolbar UI, icons and pickers. With Snow, it saves 4 KB.
+- Importing Quill at the top of a component instead puts all of it in the page: 57.3 KB for the full build.
 
 ## Same editor in both
 
@@ -47,12 +48,10 @@ Measured with production builds (Vite 8.3, Vue 3.5, Quill 2.0.3) of a page with 
 
 ```vue [vue-quilly]
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { QuillyEditor } from 'vue-quilly'
-import Quill from 'quill'
 import 'quill/dist/quill.snow.css'
 
-const editor = ref<InstanceType<typeof QuillyEditor>>()
 const content = ref('<p>Hello</p>')
 
 const options = {
@@ -67,13 +66,11 @@ const options = {
   }
 }
 
-onMounted(() => {
-  editor.value?.initialize(Quill)
-})
+const loadQuill = () => import('quill')
 </script>
 
 <template>
-  <QuillyEditor ref="editor" v-model="content" :options="options" />
+  <QuillyEditor v-model="content" :options="options" :quill-class="loadQuill" />
 </template>
 ```
 
@@ -105,28 +102,7 @@ const toolbar = [
 
 :::
 
-For the 53.3 KB core build, swap the Quill import in the vue-quilly version for this:
-
-```ts
-import Quill from 'quill/core'
-import Toolbar from 'quill/modules/toolbar'
-import Snow from 'quill/themes/snow'
-import Bold from 'quill/formats/bold'
-import Italic from 'quill/formats/italic'
-import Underline from 'quill/formats/underline'
-import List from 'quill/formats/list'
-import Link from 'quill/formats/link'
-
-Quill.register({
-  'modules/toolbar': Toolbar,
-  'themes/snow': Snow,
-  'formats/bold': Bold,
-  'formats/italic': Italic,
-  'formats/underline': Underline,
-  'formats/list': List,
-  'formats/link': Link
-})
-```
+For the `quill/core` row, load the module from [Smaller bundle with quill/core](/guide/basic-usage#smaller-bundle-with-quill-core) instead of `quill`.
 
 ## Semantic HTML
 
@@ -157,18 +133,23 @@ With `:is-semantic-html-model="true"`, vue-quilly fills `v-model` from Quill's `
 
 :::
 
-Without Quill's CSS, the first version renders as a flat numbered list. The second renders correctly anywhere: in emails, RSS, or a page that doesn't load Quill. See the [Semantic HTML example](/examples/semantic-html).
+Without Quill's CSS, the first version renders as a flat numbered list. The second keeps its structure anywhere: in emails, RSS, or a page that doesn't load Quill. Quill 2.0.3 writes its spaces as `&nbsp;`, though, so see [Semantic HTML](/guide/basic-usage#semantic-html) before you store it.
 
 ## Plugins
 
-**vue-quilly** has no plugin API of its own. Register plugins on the Quill class you import, then pass that class to `initialize()`. The plugin is always on the class the editor uses, and `options` reach Quill unchanged:
+**vue-quilly** has no plugin API of its own. Register plugins on the Quill class in a module, and load that module with `quill-class`. The plugin is always on the class the editor uses, and `options` reach Quill unchanged:
 
 ```ts
+// quill-setup.ts
 import Quill from 'quill'
 import WordCounter from './word-counter'
 
 Quill.register('modules/wordCounter', WordCounter)
 
+export default Quill
+```
+
+```ts
 const options = {
   theme: 'snow',
   modules: {
@@ -178,9 +159,7 @@ const options = {
   }
 }
 
-onMounted(() => {
-  editor.value?.initialize(Quill)
-})
+const loadQuill = () => import('./quill-setup')
 ```
 
 **VueQuill** registers plugins through its `modules` prop, or through the `Quill` object it exports, which queues `register()` calls until Quill has loaded:
@@ -209,39 +188,31 @@ Two things to watch for with VueQuill, both checked with VueQuill 1.5.5 and Quil
 
 ## SSR and Nuxt
 
-VueQuill renders a placeholder on the server and loads Quill in the browser after mount, so `<QuillEditor>` works in Nuxt and other SSR setups as it is.
+VueQuill renders a placeholder on the server and loads Quill in the browser after mount. vue-quilly does the same when you pass a loader as `quill-class`. Neither needs `<ClientOnly>` in Nuxt.
 
-vue-quilly's component doesn't import Quill, so it renders on the server too. Quill itself can't be imported there: it accesses `document` when it loads. Import it in the browser:
-
-```ts
-onMounted(async () => {
-  const { default: Quill } = await import('quill')
-  editor.value?.initialize(Quill)
-})
-```
-
-This also moves Quill into a separate chunk, like VueQuill does. If a component imports Quill at the top level, for example to register formats, render it inside `<ClientOnly>` in Nuxt, as in the [Nuxt 4 example](https://github.com/alekswebnet/vue-quilly/tree/main/nuxt).
+Quill itself can't be imported on the server: it accesses `document` when it loads. With vue-quilly, keep Quill and plugin imports in the module your loader imports. See [Nuxt and SSR](/guide/getting-started#nuxt-and-ssr).
 
 ## Migrating from VueQuill
 
 | VueQuill | vue-quilly |
 | --- | --- |
+| Quill loaded for you | `:quill-class="() => import('quill')"` |
 | `v-model:content` with `content-type="html"` | `v-model` |
-| `content-type="delta"` or `"text"` | `quill.getContents()` or `quill.getText()` on the instance from `initialize()` |
+| `content-type="delta"` or `"text"` | `quill.getContents()` or `quill.getText()` on the Quill instance |
 | `theme="snow"` and `vue-quill.snow.css` | `options.theme: 'snow'` and `quill/dist/quill.snow.css` |
 | `toolbar` array or `#selector` | `options.modules.toolbar` |
 | `toolbar="essential"` (preset) | Copy the preset array from the [VueQuill toolbar docs](https://vueup.github.io/vue-quill/guide/toolbar.html) |
 | `placeholder`, `read-only` | `options.placeholder`, `options.readOnly` |
 | `:enable="false"` | `quill.enable(false)` |
-| `:modules="{ name, module, options }"` | `Quill.register('modules/name', module)` before `initialize()`, options under `options.modules.name` |
+| `:modules="{ name, module, options }"` | `Quill.register('modules/name', module)` in the module your loader imports, options under `options.modules.name` |
 | `textChange` payload `{ delta, oldContents, source }` | `text-change` payload `{ delta, oldContent, source }` |
 | `editorChange` payload object | `editor-change` payload is the event name only |
 | `focus` / `blur` payload: editor element ref | `focus` / `blur` payload: Quill instance |
-| `getQuill()` or `@ready` | Return value of `initialize()`, or `@ready` |
+| `getQuill()` or `@ready` | `@ready`, or the return value of `initialize()` |
 | `getHTML()` / `setHTML()` | Read and write the `v-model` value |
 
 ## Which one to pick
 
-**Pick VueQuill** for a complete editor with little code: toolbar presets, props for common options, a Delta or plain-text `v-model`, and SSR with no setup. Its user base is also much larger, so you'll find more answers online.
+**Pick VueQuill** for a complete editor with little code: toolbar presets, props for common options, and a Delta or plain-text `v-model`. Its user base is also much larger, so you'll find more answers online.
 
-**Pick vue-quilly** to control Quill yourself: choose the build and register only what you use, combine plugins with your own module settings, put the editor logic on your own markup with [`useQuilly()`](/api/composable), or store semantic HTML.
+**Pick vue-quilly** to control Quill yourself: choose the build and register only what you use, keep the page bundle small, combine plugins with your own module settings, put the editor logic on your own markup with [`useQuilly()`](/api/composable), or store semantic HTML.
