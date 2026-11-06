@@ -110,6 +110,7 @@ Plugins and custom formats register on the Quill class. Do it in a module of you
 ```ts [quill-setup.ts]
 import Quill from 'quill'
 import QuillResize from 'quill-resize-module'
+import 'quill-resize-module/dist/resize.css'
 import Highlight from './highlight'
 
 Quill.register('modules/resize', QuillResize)
@@ -155,6 +156,7 @@ const loadQuill = () => import('./quill-setup')
 
 - A module runs once, however many editors load it, so each plugin registers once.
 - Most plugins import Quill themselves. Importing them only in this module keeps them out of the page bundle and off the server.
+- Import a plugin's CSS in this module too, so it loads with the plugin.
 - Apply the custom format through the API: `quill.format('highlight', true)`.
 
 Formulas need [KaTeX](https://katex.org/) on `window`. See the [full toolbar example](/examples/#full-toolbar).
