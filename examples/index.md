@@ -119,5 +119,5 @@ export default Quill
 
 - [Plugins and custom formats](/guide/basic-usage#plugins-and-formats), with image resizing
 - [Semantic HTML](/guide/basic-usage#semantic-html) output
-- [Nuxt 4 project](https://github.com/alekswebnet/vue-quilly/tree/main/nuxt)
+- [Nuxt 4 project](https://github.com/vue-quilly/vue-quilly/tree/main/nuxt), set up as in [Nuxt and SSR](/guide/getting-started#nuxt-and-ssr)
 - [Without a bundler](/guide/getting-started#without-a-bundler), or on [CodePen](https://codepen.io/redrobot753/pen/VwJwPLP)

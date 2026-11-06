@@ -19,6 +19,8 @@ features:
     details: About 1.3 KB gzipped. Quill loads after mount, in its own chunk.
   - title: ⚡ SSR ready
     details: Works in Nuxt and other SSR apps without ClientOnly.
+    link: /guide/getting-started#nuxt-and-ssr
+    linkText: Nuxt setup
   - title: 🔄 HTML and Delta
     details: v-model with Quill's HTML or semantic HTML, and the Quill API for Delta.
   - title: ⚙️ Plain Quill
