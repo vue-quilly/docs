@@ -59,10 +59,48 @@ Import the CSS of your theme, `quill.snow.css` or `quill.bubble.css`. Both inclu
 
 With a loader, nothing else is needed. The server renders an empty `<div>`, and Quill loads in the browser after hydration. You don't need `<ClientOnly>`.
 
-Quill itself can't run on the server: importing `quill` or `quill/core` throws `document is not defined`. Keep it out of components that render there:
+Quill itself can't run on the server: importing `quill` or `quill/core` throws `document is not defined`. Keep Quill, and anything that touches `window`, in a module that your loader imports. This one also sets up KaTeX for the formula button:
 
-- Import only types at the top level: `import type Quill from 'quill'`.
-- Register plugins in a module that your loader imports, as shown in [Plugins and formats](/guide/basic-usage#plugins-and-formats).
+::: code-group
+
+```vue [app/components/Editor.vue]
+<script setup lang="ts">
+import { ref } from 'vue'
+import { QuillyEditor } from 'vue-quilly'
+import 'quill/dist/quill.snow.css'
+
+const content = ref('<p>Hello Nuxt!</p>')
+
+const options = {
+  theme: 'snow',
+  modules: { toolbar: [['bold', 'italic'], ['formula']] }
+}
+
+const loadQuill = () => import('~/lib/quill-setup')
+</script>
+
+<template>
+  <QuillyEditor v-model="content" :options="options" :quill-class="loadQuill" />
+</template>
+```
+
+```ts [app/lib/quill-setup.ts]
+import Quill from 'quill'
+import katex from 'katex'
+import 'katex/dist/katex.min.css'
+
+// Quill's formula format renders with window.katex
+Object.assign(window, { katex })
+
+export default Quill
+```
+
+:::
+
+- At the top level of components, import only types: `import type Quill from 'quill'`.
+- Plugins go in the same module, as shown in [Plugins and formats](/guide/basic-usage#plugins-and-formats).
+
+The [Nuxt example](https://github.com/vue-quilly/vue-quilly/tree/main/nuxt) is a complete Nuxt 4 app with this setup.
 
 ## Initialize manually
 
