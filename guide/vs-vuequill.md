@@ -9,7 +9,7 @@ description: How vue-quilly compares with VueQuill (@vueup/vue-quill) — bundle
 - **VueQuill** is a ready-made editor: props and toolbar presets for common options, and it loads Quill for you.
 - **vue-quilly** is the editor logic only: you load Quill yourself, choose the build, and configure it with Quill's own options.
 
-This page compares vue-quilly 1.3.0 with VueQuill 1.5.5, the current versions as of November 2026.
+This page compares vue-quilly 1.3.1 with VueQuill 1.5.5, the current versions as of November 2026.
 
 ## At a glance
 
